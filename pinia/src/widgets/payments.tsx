@@ -25,35 +25,27 @@ interface DataItem {
   approved: boolean;
 }
 
-const data: DataItem[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    photo: "https://via.placeholder.com/150",
-    timestamp: "2024-10-03 10:00:00",
-    bank: "Bank A",
-    price: "$500",
-    approved: true,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    photo: "https://via.placeholder.com/150",
-    timestamp: "2024-10-03 12:00:00",
-    bank: "Bank B",
-    price: "$300",
-    approved: false,
-  },
-];
 
 function ListWidget()  {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [list, setList] = useState<any[]>([]);
+  const [list, setList] = useState<DataItem[]>([]);
   useEffect(()=> {
     const fetchList = async () => {
       const querySnapshot = await getDocs(collection(db, 'payment'));
-      const fetchedList = querySnapshot.docs.map(doc => doc.data());
+      const fetchedList: DataItem[] = querySnapshot.docs.map(doc =>{
+        const data = doc.data();
+          // Make sure to structure the data according to DataItem interface
+        return {
+            id: data.id,
+            name: data.name,
+            photo: data.photo,
+            timestamp: data.timestamp,
+            bank: data.bank,
+            price: data.price,
+            approved: data.approved,
+          } as DataItem;
+      });
       setList(fetchedList);
     };
 
