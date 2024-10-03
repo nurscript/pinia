@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, Timestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 import {
   Box,
@@ -19,32 +19,32 @@ interface DataItem {
   id: number;
   name: string;
   photo: string;
-  timestamp: string;
+  time: Timestamp | undefined;
   bank: string;
   price: string;
   approved: boolean;
 }
 
 
-function ListWidget()  {
+function ListWidget() {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [list, setList] = useState<DataItem[]>([]);
-  useEffect(()=> {
+  useEffect(() => {
     const fetchList = async () => {
       const querySnapshot = await getDocs(collection(db, 'payment'));
-      const fetchedList: DataItem[] = querySnapshot.docs.map(doc =>{
+      const fetchedList: DataItem[] = querySnapshot.docs.map(doc => {
         const data = doc.data();
-          // Make sure to structure the data according to DataItem interface
+        // Make sure to structure the data according to DataItem interface
         return {
-            id: data.id,
-            name: data.name,
-            photo: data.photo,
-            timestamp: data.timestamp,
-            bank: data.bank,
-            price: data.price,
-            approved: data.approved,
-          } as DataItem;
+          id: data.id,
+          name: data.name,
+          photo: data.photo,
+          time: data.time,
+          bank: data.bank,
+          price: data.price,
+          approved: data.approved,
+        } as DataItem;
       });
       setList(fetchedList);
     };
@@ -62,6 +62,17 @@ function ListWidget()  {
     setSelectedImage(undefined);
     setIsModalOpen(false);
   };
+
+  const parseTime = (time: Timestamp | undefined) => {
+    if  (!(time instanceof Timestamp)) {
+      return 'invalid'
+    }
+    const date = time.toDate();
+    // Format the date and time
+    const formattedDate = date.toLocaleDateString(); // e.g., "12/31/2023"
+    const formattedTime = date.toLocaleTimeString(); // e.g., "12:00:00 PM"
+    return formattedDate + ' - ' + formattedTime;
+  }
 
   return (
     <Box sx={{ margin: '2rem auto', maxWidth: '600px', backgroundColor: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: 3 }}>
@@ -84,7 +95,7 @@ function ListWidget()  {
               secondary={
                 <>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Timestamp:</strong> {item.timestamp}
+                    <strong>Timestamp:</strong> {parseTime(item.time)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     <strong>Bank:</strong> {item.bank}
