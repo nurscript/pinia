@@ -1,0 +1,2 @@
+# pinia
+The awesome frontend
