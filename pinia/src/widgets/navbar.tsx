@@ -1,22 +1,31 @@
 
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import reactLogo from '../assets/react.svg'
+import { AppBar, Toolbar, Button, Box , IconButton} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
+import reactLogo from '../assets/react.svg'
+import '../App.css'
 function Navbar() {
     const navigate = useNavigate();
-    const handleNavigation = (path:string) => {
+    const handleNavigation = (path: string) => {
         navigate(path);  // Navigate to the specified path
-      };
+    };
     return (
         <>
-            <AppBar position="sticky">
+            <AppBar position="static">
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        <img src={reactLogo} alt="logo" />
-                        Dashboard
-                    </Typography>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                    >
+                        
+                        <img className="logo react" src={reactLogo} alt="logo" />
+                        <MenuIcon />
+                    </IconButton>
                     <Box>
                         <Button color="inherit" onClick={() => handleNavigation('/')}>Dashboard</Button>
                         <Button color="inherit" onClick={() => handleNavigation('/withdraw')}>Profile</Button>
